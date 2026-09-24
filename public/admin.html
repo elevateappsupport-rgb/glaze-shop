@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GLAZE Admin — Discount</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08080a;--glass:rgba(255,255,255,.04);--brd:rgba(255,255,255,.09);--text:#f1f1f4;--muted:#8b8d96;--pink:#ff2f8f;--violet:#8b5cf6;--grad:linear-gradient(120deg,var(--pink),var(--violet));}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;padding:32px 20px;}
+.wrap{width:100%;max-width:520px;margin:0 auto;}
+h1{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600;margin:0 0 4px;display:flex;align-items:center;gap:9px;}
+h1 i{width:10px;height:10px;border-radius:3px;background:var(--grad);box-shadow:0 0 12px var(--pink);}
+.sub{color:var(--muted);font-size:13px;margin:0 0 22px;}
+.card{background:var(--glass);border:1px solid var(--brd);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:16px;margin-bottom:16px;}
+.card h2{font-size:14px;font-weight:600;margin:0;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px;}
+input[type=text],input[type=password],input[type=number],input[type=datetime-local],select{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--brd);border-radius:10px;padding:11px 13px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s;}
+input:focus,select:focus{border-color:rgba(255,47,143,.6);}
+.toggle{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--brd);border-radius:12px;background:rgba(255,255,255,.02);cursor:pointer;}
+.toggle input{display:none;}
+.switch{position:relative;width:44px;height:24px;border-radius:100px;background:rgba(255,255,255,.12);transition:background .2s;flex-shrink:0;}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s;}
+.toggle input:checked + .switch{background:var(--grad);}
+.toggle input:checked + .switch::after{transform:translateX(20px);}
+.toggle div{font-size:13.5px;}
+.toggle small{display:block;font-size:12px;color:var(--muted);}
+.radios{display:flex;gap:8px;flex-wrap:wrap;}
+.radios label{cursor:pointer;flex:1;min-width:120px;margin:0;}
+.radios input{display:none;}
+.radios span{display:block;text-align:center;padding:11px 14px;border-radius:11px;border:1px solid var(--brd);background:rgba(255,255,255,.02);font-size:13.5px;font-weight:500;color:var(--muted);transition:all .2s;}
+.radios input:checked + span{background:var(--grad);color:#fff;border-color:transparent;}
+.radios span:hover{color:var(--text);border-color:rgba(255,255,255,.3);}
+.prodlist{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
+.prodlist label{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--brd);border-radius:10px;background:rgba(255,255,255,.02);cursor:pointer;font-size:13px;color:var(--text);margin:0;transition:all .15s;}
+.prodlist label:hover{border-color:rgba(255,47,143,.4);}
+.prodlist input{accent-color:var(--pink);width:16px;height:16px;flex-shrink:0;}
+.prodlist small{color:var(--muted);font-size:11px;margin-left:auto;}
+.durations{display:flex;gap:6px;flex-wrap:wrap;}
+.durations button{padding:8px 13px;border-radius:100px;border:1px solid var(--brd);background:rgba(255,255,255,.02);color:var(--muted);font-size:12.5px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .15s;width:auto;}
+.durations button:hover{color:var(--text);border-color:rgba(255,255,255,.3);}
+.durations button.on{background:var(--grad);color:#fff;border-color:transparent;}
+button.primary{width:100%;padding:13px;border-radius:11px;background:var(--grad);color:#fff;font-weight:600;font-size:14.5px;font-family:inherit;border:none;cursor:pointer;transition:transform .15s,box-shadow .2s;}
+button.primary:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(255,47,143,.35);}
+button.primary:active{transform:scale(.98);}
+button.primary[disabled]{opacity:.5;pointer-events:none;}
+.status{margin-top:14px;padding:11px 14px;border-radius:11px;font-size:13px;display:flex;align-items:center;gap:8px;border:1px solid var(--brd);background:rgba(255,255,255,.02);}
+.status.ok{border-color:rgba(74,222,128,.4);color:#4ade80;}
+.status.err{border-color:rgba(255,80,80,.4);color:#ff6060;}
+.status.warn{border-color:rgba(255,180,80,.4);color:#ffb450;}
+.status .dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.preview{margin-top:16px;padding:14px;border:1px dashed rgba(255,47,143,.5);border-radius:12px;font-size:13px;color:var(--muted);line-height:1.7;}
+.preview b{color:var(--text);}
+.preview s{color:var(--muted);}
+.preview .badge{display:inline-block;padding:2px 8px;border-radius:100px;background:var(--grad);color:#fff;font-size:11px;font-weight:700;margin-left:6px;}
+.timer{font-family:'Space Grotesk',sans-serif;color:var(--pink);font-weight:600;}
+a.back{color:var(--muted);font-size:12.5px;text-decoration:none;display:inline-block;margin-top:14px;}
+a.back:hover{color:var(--text);}
+.hidden{display:none !important;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><i></i>GLAZE Admin</h1>
+  <p class="sub">Live discount control — save once, updates everywhere instantly.</p>
+
+  <div class="card">
+    <h2>Access</h2>
+    <div>
+      <label for="token">Admin token</label>
+      <input type="password" id="token" placeholder="Paste your ADMIN_TOKEN here" autocomplete="off">
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Discount</h2>
+
+    <label class="toggle">
+      <input type="checkbox" id="active">
+      <span class="switch"></span>
+      <div>
+        Enable discount
+        <small>Turn it on/off live — customers see it instantly</small>
+      </div>
+    </label>
+
+    <div>
+      <label for="percent">Discount percent (0–90)</label>
+      <input type="number" id="percent" min="0" max="90" step="1" value="0">
+    </div>
+
+    <div>
+      <label for="label">Label (shown to customers, optional)</label>
+      <input type="text" id="label" maxlength="40" placeholder="e.g. Weekend Sale">
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Applies to</h2>
+    <div class="radios">
+      <label><input type="radio" name="scope" value="all" checked><span>All products</span></label>
+      <label><input type="radio" name="scope" value="products"><span>Specific products</span></label>
+    </div>
+    <div id="prodWrap" class="hidden">
+      <p style="color:var(--muted);font-size:12.5px;margin:0 0 4px;">Pick the products this sale applies to:</p>
+      <div class="prodlist" id="prodlist"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Ends at</h2>
+    <div class="durations" id="durations">
+      <button type="button" data-min="0">Never</button>
+      <button type="button" data-min="60">1 hour</button>
+      <button type="button" data-min="360">6 hours</button>
+      <button type="button" data-min="1440">24 hours</button>
+      <button type="button" data-min="4320">3 days</button>
+      <button type="button" data-min="10080">7 days</button>
+      <button type="button" data-min="custom">Custom…</button>
+    </div>
+    <div id="customWrap" class="hidden" style="margin-top:10px;">
+      <label for="customEnd">Ends at (your local time)</label>
+      <input type="datetime-local" id="customEnd">
+    </div>
+  </div>
+
+  <button class="primary" id="save">Save &amp; push live</button>
+
+  <div id="status" class="status"><span class="dot"></span><span id="statusTxt">Enter token and save</span></div>
+
+  <div class="preview" id="preview"></div>
+
+  <a class="back" href="/">← Back to store</a>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const tokenEl = $('token'), percentEl = $('percent'), labelEl = $('label'), activeEl = $('active');
+const prodWrap = $('prodWrap'), prodlist = $('prodlist'), durations = $('durations');
+const customWrap = $('customWrap'), customEnd = $('customEnd');
+const statusEl = $('status'), statusTxt = $('statusTxt'), previewEl = $('preview');
+
+let PRODUCTS = [];
+let durationMin = 0; // 0 = never, 'custom' = use input
+
+// ---------- load products for the checkbox list ----------
+async function loadProducts() {
+  try {
+    const r = await fetch('/api/products');
+    PRODUCTS = await r.json();
+    prodlist.innerHTML = PRODUCTS.map(p => `
+      <label>
+        <input type="checkbox" value="${p.id}">
+        <span>${p.name}</span>
+        <small>${Math.round(p.m).toLocaleString('en')}M</small>
+      </label>`).join('');
+  } catch {}
+}
+
+// ---------- duration buttons ----------
+function selectDuration(min) {
+  durationMin = min;
+  [...durations.querySelectorAll('button')].forEach(b => {
+    b.classList.toggle('on', b.dataset.min === String(min));
+  });
+  customWrap.classList.toggle('hidden', min !== 'custom');
+  renderPreview();
+}
+
+// ---------- preview ----------
+function renderPreview() {
+  const p = Math.max(0, Math.min(90, Math.round(Number(percentEl.value) || 0)));
+  const active = activeEl.checked && p > 0;
+
+  // scope label
+  const scope = document.querySelector('input[name="scope"]:checked')?.value || 'all';
+  const picked = [...prodlist.querySelectorAll('input:checked')].map(i => Number(i.value));
+  const scopeTxt = scope === 'all' || !picked.length ? 'all products' : `${picked.length} product(s)`;
+
+  // when does it end
+  let whenTxt = 'never ends';
+  if (active) {
+    if (durationMin === 'custom' && customEnd.value) {
+      whenTxt = 'ends ' + new Date(customEnd.value).toLocaleString();
+    } else if (Number(durationMin) > 0) {
+      const end = new Date(Date.now() + Number(durationMin) * 60_000);
+      whenTxt = 'ends ' + end.toLocaleString();
+    }
+  }
+
+  if (!active) {
+    previewEl.innerHTML = `Discount is <b>off</b>. Sample item: <b>400M</b>`;
+    return;
+  }
+
+  // sample items
+  const sample = PRODUCTS.slice(0, 3).map(pr => {
+    const applies = scope === 'all' || picked.includes(pr.id);
+    if (!applies) return `<div>${pr.name}: <b>${Math.round(pr.m).toLocaleString('en')}M</b> (no discount)</div>`;
+    const discounted = Math.round(pr.m * (1 - p / 100));
+    return `<div>${pr.name}: <s>${Math.round(pr.m).toLocaleString('en')}M</s> <b>${discounted.toLocaleString('en')}M</b> <span class="badge">-${p}%</span></div>`;
+  }).join('');
+
+  const label = labelEl.value.trim();
+  previewEl.innerHTML = `
+    <div>Sale: <b>${label || 'Discount'}</b> · <b>-${p}%</b> on <b>${scopeTxt}</b> · <span class="timer">${whenTxt}</span></div>
+    <div style="margin-top:8px;border-top:1px solid var(--brd);padding-top:8px">${sample}</div>`;
+}
+
+// ---------- load current ----------
+async function loadCurrent() {
+  try {
+    const r = await fetch('/api/discount');
+    const d = await r.json();
+    const raw = d.raw || d;
+
+    percentEl.value = raw.percent || 0;
+    labelEl.value = raw.label || '';
+    activeEl.checked = !!raw.active;
+
+    // scope
+    const scope = raw.scope || 'all';
+    document.querySelectorAll('input[name="scope"]').forEach(r => r.checked = r.value === scope);
+    prodWrap.classList.toggle('hidden', scope !== 'products');
+    [...prodlist.querySelectorAll('input')].forEach(cb => {
+      cb.checked = (raw.productIds || []).includes(Number(cb.value));
+    });
+
+    // expiry
+    if (raw.expiresAt) {
+      customEnd.value = new Date(raw.expiresAt - new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
+      selectDuration('custom');
+    } else {
+      selectDuration(0);
+    }
+
+    renderPreview();
+
+    if (d.active) {
+      setStatus('ok', `Live: -${d.percent}% on ${d.scope === 'products' ? d.productIds.length + ' product(s)' : 'all'}`);
+    } else if (raw.active && raw.expiresAt && Date.now() >= raw.expiresAt) {
+      setStatus('warn', 'Discount expired');
+    } else {
+      setStatus('', 'Discount is off');
+    }
+  } catch {
+    setStatus('err', 'Could not load current discount');
+  }
+}
+
+function setStatus(kind, txt) { statusEl.className = 'status ' + kind; statusTxt.textContent = txt; }
+
+// ---------- save ----------
+async function save() {
+  const token = tokenEl.value.trim();
+  if (!token) return setStatus('err', 'Enter your admin token first');
+
+  const scope = document.querySelector('input[name="scope"]:checked')?.value || 'all';
+  const productIds = [...prodlist.querySelectorAll('input:checked')].map(i => Number(i.value));
+
+  let expiresAt = null;
+  if (activeEl.checked) {
+    if (durationMin === 'custom') {
+      if (!customEnd.value) return setStatus('err', 'Pick a custom end date/time');
+      expiresAt = new Date(customEnd.value).getTime();
+      if (expiresAt <= Date.now()) return setStatus('err', 'Custom end date must be in the future');
+    } else if (Number(durationMin) > 0) {
+      expiresAt = Date.now() + Number(durationMin) * 60_000;
+    }
+  }
+
+  const body = {
+    percent: Number(percentEl.value) || 0,
+    label: labelEl.value.trim(),
+    active: activeEl.checked,
+    scope,
+    productIds,
+    expiresAt,
+  };
+
+  $('save').disabled = true;
+  setStatus('', 'Saving…');
+  try {
+    const r = await fetch('/api/admin/discount', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
+      body: JSON.stringify(body),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'Failed');
+    localStorage.setItem('glaze_admin_token', token);
+    const d = j.discount;
+    if (d.active) {
+      setStatus('ok', `Live now: -${d.percent}% on ${d.scope === 'products' ? d.productIds.length + ' product(s)' : 'all'}${d.expiresAt ? ' · ' + new Date(d.expiresAt).toLocaleString() : ''}`);
+    } else {
+      setStatus('', 'Discount is off');
+    }
+    renderPreview();
+  } catch (e) {
+    setStatus('err', e.message);
+  } finally {
+    $('save').disabled = false;
+  }
+}
+
+// ---------- wire up ----------
+tokenEl.value = localStorage.getItem('glaze_admin_token') || '';
+durations.querySelectorAll('button').forEach(b => b.addEventListener('click', () => selectDuration(b.dataset.min)));
+document.querySelectorAll('input[name="scope"]').forEach(r => r.addEventListener('change', () => {
+  prodWrap.classList.toggle('hidden', r.value !== 'products' || !r.checked);
+  renderPreview();
+}));
+[percentEl, labelEl, customEnd].forEach(el => el.addEventListener('input', renderPreview));
+prodlist.addEventListener('change', renderPreview);
+activeEl.addEventListener('change', renderPreview);
+$('save').addEventListener('click', save);
+
+(async () => { await loadProducts(); await loadCurrent(); renderPreview(); })();
+</script>
+</body>
+</html>
